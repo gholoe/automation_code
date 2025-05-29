@@ -109,7 +109,7 @@ exports.config = {
     // Make sure you have the wdio adapter package for the specific framework installed
     // before running any tests.
     framework: 'cucumber',
-    
+
     //
     // The number of times to retry the entire specfile when it fails as a whole
     // specFileRetries: 1,
@@ -123,7 +123,21 @@ exports.config = {
     // Test reporter for stdout.
     // The only one supported by default is 'dot'
     // see also: https://webdriver.io/docs/dot-reporter
-    reporters: [['allure', {outputDir: 'allure-results'}],'json','video'],
+    // reporters: [['allure', {outputDir: 'allure-results'}],'json','video'],
+    reporters: [
+        ['allure', {
+            outputDir: 'allure-results',
+            disableWebdriverStepsReporting: false,   // 👈 Enables logging each command
+            disableWebdriverScreenshotsReporting: false  // 👈 Enables screenshot attachment
+        }]
+    ],
+    afterStep: async function (step, scenario, result, context) {
+        if (!result.passed) {
+            await browser.takeScreenshot(); // Screenshot for failed steps
+        } else {
+            await browser.takeScreenshot(); // Screenshot for all steps
+        }
+    },
 
     // If you are using Cucumber you need to specify the location of your step definitions.
     cucumberOpts: {
@@ -274,7 +288,7 @@ exports.config = {
      */
     // afterFeature: function (uri, feature) {
     // },
-    
+
     /**
      * Runs after a WebdriverIO command gets executed
      * @param {string} commandName hook command name
