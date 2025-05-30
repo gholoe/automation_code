@@ -28,9 +28,9 @@ jobs:
           npm install -g allure-commandline
           allure generate allure-results --clean -o allure-report
 
-      - name: Upload Allure Report as Artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: allure-report
-          path: allure-report
+      # - name: Upload Allure Report as Artifact
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: allure-report
+      #     path: allure-report
 
