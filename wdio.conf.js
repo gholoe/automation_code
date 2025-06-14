@@ -1,4 +1,6 @@
+const Video = require('wdio-video-reporter').default;
 exports.config = {
+
     //
     // ====================
     // Runner Configuration
@@ -138,19 +140,64 @@ exports.config = {
     // The only one supported by default is 'dot'
     // see also: https://webdriver.io/docs/dot-reporter
     // reporters: [['allure', {outputDir: 'allure-results'}],'json','video'],
+    // reporters: [
+    //     ['allure', {
+    //         outputDir: 'allure-results',
+    //         disableWebdriverStepsReporting: false,   // 👈 Enables logging each command
+    //         disableWebdriverScreenshotsReporting: false  // 👈 Enables screenshot attachment
+    //     }]
+    // ],
+    // afterStep: async function (step, scenario, result, context) {
+    //     if (!result.passed) {
+    //         await browser.takeScreenshot(); // Screenshot for failed steps
+    //     } else {
+    //         await browser.takeScreenshot(); // Screenshot for all steps
+    //     }
+    // },
+
+
     reporters: [
+        'spec',
         ['allure', {
             outputDir: 'allure-results',
-            disableWebdriverStepsReporting: false,   // 👈 Enables logging each command
-            disableWebdriverScreenshotsReporting: false  // 👈 Enables screenshot attachment
+            disableWebdriverStepsReporting: false,
+            disableWebdriverScreenshotsReporting: false
+        }],
+        [Video, {
+            saveAllVideos: true,
+            videoSlowdownMultiplier: 3,
+            outputDir: './videos',
+            videoRenderTimeout: 5,
+            videoCodec: 'libx264',
+            videoFormat: 'mp4',
         }]
     ],
     afterStep: async function (step, scenario, result, context) {
-        if (!result.passed) {
-            await browser.takeScreenshot(); // Screenshot for failed steps
-        } else {
-            await browser.takeScreenshot(); // Screenshot for all steps
-        }
+        // ⬇️ This part is for your custom report only
+        const fs = require('fs');
+        const path = require('path');
+
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+        const stepName = step?.text?.replace(/[^a-z0-9]/gi, '_').toLowerCase().substring(0, 50);
+        const fileName = `${timestamp}_${stepName}_${result.passed ? 'PASSED' : 'FAILED'}.png`;
+
+        const screenshotDir = path.resolve('./custom-html/attachments');
+        if (!fs.existsSync(screenshotDir)) fs.mkdirSync(screenshotDir);
+
+        const filePath = path.join(screenshotDir, fileName);
+        await browser.saveScreenshot(filePath);
+
+        fs.appendFileSync('./custom-html/attachments/log.txt', `${step.text} | ${fileName} | ${result.passed ? 'PASSED' : 'FAILED'}\\n`);
+    },
+    onComplete: function (exitCode, config, capabilities, results) {
+        const { exec } = require('child_process');
+        exec('node ./helpers/generateHtmlReport', (err, stdout, stderr) => {
+            if (err) {
+                console.error('❌ Gagal generate HTML:', err);
+            } else {
+                console.log('✅ Custom HTML berhasil dibuat:\n', stdout);
+            }
+        });
     },
 
     // If you are using Cucumber you need to specify the location of your step definitions.

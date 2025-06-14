@@ -1,3 +1,16 @@
-node_modules
-allure-report
-allure-results
+# Dependencies
+node_modules/
+
+# Allure report output
+allure-report/
+allure-results/
+
+# Custom report and assets
+custom-html/
+videos/
+
+# Optional: local logs or screenshots
+*.log
+*.png
+
+
