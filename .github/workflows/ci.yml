@@ -20,7 +20,7 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      - name: Run Tests
+      - name: Run WDIO Tests and Generate Custom Report
         run: npm run testNGenerate
 
       - name: Install Allure Commandline
@@ -29,14 +29,26 @@ jobs:
       - name: Generate Allure Report
         run: allure generate allure-results --clean -o allure-report
 
-      - name: Upload Allure results as Artifact
+      - name: Upload Allure results
         uses: actions/upload-artifact@v4
         with:
           name: allure-results
           path: allure-results
 
-      - name: Upload Allure Report as Artifact
+      - name: Upload Allure HTML Report
         uses: actions/upload-artifact@v4
         with:
           name: allure-report
           path: allure-report
+
+      - name: Upload Custom HTML Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: custom-html
+          path: custom-html
+
+      - name: Upload Video Recordings
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-videos
+          path: videos
