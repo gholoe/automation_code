@@ -6,11 +6,11 @@ allure-report/
 allure-results/
 
 # Custom report and assets
-# custom-html/
-# videos/
+custom-html/
+videos/
 
 # Optional: local logs or screenshots
-# *.log
-# *.png
+*.log
+*.png
 
 
