@@ -21,7 +21,7 @@ jobs:
         run: npm install
 
       - name: Run Tests
-        run: npm run test
+        run: npm run testNGenerate
 
       - name: Install Allure Commandline
         run: npm install -g allure-commandline
