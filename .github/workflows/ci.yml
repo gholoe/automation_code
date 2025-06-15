@@ -28,7 +28,7 @@ jobs:
       - name: Run WDIO Tests with xvfb
         run: |
           export DISPLAY=:99
-          nohup Xvfb :99 -screen 0 1920x1080x24 &
+          Xvfb :99 -screen 0 1920x1080x24 > /dev/null 2>&1 &
           sleep 3
           DISPLAY=:99 npm run testNGenerate
 
