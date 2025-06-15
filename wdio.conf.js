@@ -154,6 +154,11 @@ exports.config = {
     //         await browser.takeScreenshot(); // Screenshot for all steps
     //     }
     // },
+    before: async function () {
+        // Delay 3 detik untuk memastikan virtual display (Xvfb) dan browser siap
+        console.log('⏳ Waiting for environment stabilization...');
+        await new Promise(resolve => setTimeout(resolve, 3000));
+    },
 
 
     reporters: [
@@ -185,7 +190,11 @@ exports.config = {
         if (!fs.existsSync(screenshotDir)) fs.mkdirSync(screenshotDir);
 
         const filePath = path.join(screenshotDir, fileName);
-        await browser.saveScreenshot(filePath);
+        await browser.saveScreenshot(filePath).then(() => {
+            console.log(`✅ Screenshot saved: ${fileName}`);
+        }).catch(err => {
+            console.error(`❌ Failed to save screenshot for step: ${step.text}`);
+        });
 
         fs.appendFileSync('./custom-html/attachments/log.txt', `${step.text} | ${fileName} | ${result.passed ? 'PASSED' : 'FAILED'}\\n`);
     },
