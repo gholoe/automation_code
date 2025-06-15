@@ -20,21 +20,25 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      - name: Start virtual display
+      - name: Run WDIO Tests with xvfb
         run: |
           sudo apt-get update
           sudo apt-get install -y xvfb ffmpeg
           export DISPLAY=:99
           nohup Xvfb :99 -screen 0 1920x1080x24 &
-
-      - name: Run WDIO Tests and Generate Custom Report
-        run: DISPLAY=:99 npm run testNGenerate
+          sleep 3
+          DISPLAY=:99 npm run testNGenerate
 
       - name: Install Allure Commandline
         run: npm install -g allure-commandline
 
       - name: Generate Allure Report
         run: allure generate allure-results --clean -o allure-report
+
+      - name: Ensure output folders exist
+        run: |
+          mkdir -p videos
+          mkdir -p custom-html/attachments
 
       - name: Upload Allure results
         uses: actions/upload-artifact@v4
